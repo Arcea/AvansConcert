@@ -21,15 +21,15 @@ public class DatabaseController {
 				st = conn.createStatement();
 				st.executeUpdate(
 						"CREATE TABLE IF NOT EXISTS `artists` (`id` INT(11) NOT NULL AUTO_INCREMENT, `artist` VARCHAR(45) DEFAULT NULL, `description` VARCHAR(45) DEFAULT NULL, PRIMARY KEY (`id`)) ENGINE=myisam AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;");
-				st.executeQuery(
+				st.executeUpdate(
 						"INSERT IGNORE INTO `artists` (`id`, `artist`, `description`) VALUES(1,'Avenged Sevenfold','Metal band'), ( 2, 'Hollywood Undead', 'Rapcore band'), ( 3, 'Felkonne', 'Makes metal covers');");
 				st.executeUpdate(
 						"CREATE TABLE IF NOT EXISTS `planning` (`id` INT(11) NOT NULL AUTO_INCREMENT, `artist_id` INT(11) DEFAULT '0', `stage_id` INT(11) DEFAULT '0', `start_time` DATETIME DEFAULT NULL, `end_time` DATETIME DEFAULT NULL, PRIMARY KEY (`id`), KEY `artist_id` (`artist_id`), KEY `stage_id` (`stage_id`)) ENGINE=myisam AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;");
-				st.executeQuery(
+				st.executeUpdate(
 						"INSERT IGNORE INTO `planning` (`id`, `artist_id`, `stage_id`, start_time, end_time) VALUES(1, 1, 1, '2017-03-28 22:00:00', '2017-03-28 23:00:00'), (2, 2, 2, '2017-03-28 22:00:00', '2017-03-28 23:00:00'), (3, 3, 3, '2017-03-28 22:00:00', '2017-03-28 23:00:00');");
 				st.executeUpdate(
 						"CREATE TABLE IF NOT EXISTS `stages` (`id` INT(11) NOT NULL AUTO_INCREMENT, `stage` VARCHAR(255) DEFAULT '0', `description` VARCHAR(255) DEFAULT '0', PRIMARY KEY (`id`)) ENGINE=myisam AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;");
-				st.executeQuery(
+				st.executeUpdate(
 						"INSERT IGNORE INTO `stages`(`id`,`stage`,`description`) VALUES(1,'Stage 1','Stage for metal'), (2,'Podium 2','Stage for rap'),(3,'Stage 3','Stage for unkown artists'),( 4,'Stage 4','Extra stage');");
 
 			}
