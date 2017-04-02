@@ -1,5 +1,6 @@
 package App;
 
+
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,7 @@ import Model.StageModel;
 import Controller.ArtistDialogController;
 import Controller.ArtistOverviewController;
 import Controller.DatabaseController;
+import Controller.PlanDialogController;
 import Controller.PlanningOverviewController;
 import Controller.StageDialogController;
 import Controller.StageOverviewController;
@@ -58,17 +60,12 @@ public class MainApp extends Application {
 		showArtistOverview();
 	}
 
-	/**
-	 * Initializes the root layout.
-	 */
 	public void initRootLayout() {
 		try {
-			// Load root layout from fxml file.
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("../View/RootLayout.fxml"));
 			rootLayout = (BorderPane) loader.load();
 
-			// Show the scene containing the root layout.
 			Scene scene = new Scene(rootLayout, 800, 525);
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -76,10 +73,6 @@ public class MainApp extends Application {
 			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Shows the person overview inside the root layout.
-	 */
 
 	public void showArtistOverview() {
 		try {
@@ -92,12 +85,11 @@ public class MainApp extends Application {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			// Load person overview.
+
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("../View/ArtistOverview.fxml"));
 			AnchorPane artistOverview = (AnchorPane) loader.load();
 
-			// Set person overview into the center of root layout.
 			if (rootLayout == null) {
 				FXMLLoader loader1 = new FXMLLoader();
 				loader1.setLocation(MainApp.class.getResource("../View/RootLayout.fxml"));
@@ -109,7 +101,6 @@ public class MainApp extends Application {
 			}
 
 			rootLayout.setCenter(artistOverview);
-			// Give the controller access to the main app.
 			ArtistOverviewController controller = loader.getController();
 			controller.setMainApp(this);
 		} catch (IOException e) {
@@ -152,9 +143,9 @@ public class MainApp extends Application {
 			ResultSet rs = DatabaseController.DBConnect(null);
 			try {
 				while (rs.next()) {
-					planData.add(
-							new PlanModel(rs.getInt("id"), rs.getString("artists.artist"), rs.getString("stages.stage"),
-									rs.getInt("planning.start_time"), rs.getInt("planning.end_time")));
+					planData.add(new PlanModel(rs.getInt("id"), rs.getInt("artists.id"), rs.getInt("stages.id"),
+							rs.getString("artists.artist"), rs.getString("stages.stage"),
+							rs.getString("planning.start_time"), rs.getString("planning.end_time")));
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -167,7 +158,6 @@ public class MainApp extends Application {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class.getResource("../View/PlanningOverview.fxml"));
 			AnchorPane planningOverview = (AnchorPane) loader.load();
-
 			rootLayout.setCenter(planningOverview);
 			Scene scene = new Scene(rootLayout, 800, 525);
 			this.primaryStage.setScene(scene);
@@ -179,11 +169,6 @@ public class MainApp extends Application {
 		}
 	}
 
-	/**
-	 * Returns the main stage.
-	 * 
-	 * @return
-	 */
 	public Stage getPrimaryStage() {
 		return primaryStage;
 	}
@@ -232,6 +217,32 @@ public class MainApp extends Application {
 			controller.setStage(stage);
 
 			dialogStage.showAndWait();
+
+			return controller.isOkClicked();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean showPlanDialog(PlanModel plan) {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource("../View/PlanDialog.fxml"));
+			AnchorPane page = (AnchorPane) loader.load();
+
+			Stage dialogPlan = new Stage();
+			dialogPlan.setTitle("Plan Dialog");
+			dialogPlan.initModality(Modality.WINDOW_MODAL);
+			dialogPlan.initOwner(primaryStage);
+			Scene scene = new Scene(page);
+			dialogPlan.setScene(scene);
+
+			PlanDialogController controller = loader.getController();
+			controller.setDialogStage(dialogPlan);
+			controller.setPlan(plan);
+
+			dialogPlan.showAndWait();
 
 			return controller.isOkClicked();
 		} catch (IOException e) {

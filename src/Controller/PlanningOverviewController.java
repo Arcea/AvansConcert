@@ -7,9 +7,14 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import App.MainApp;
 import Model.ArtistModel;
 import Model.PlanModel;
+import Model.StageModel;
 
 public class PlanningOverviewController {
 	@FXML
@@ -36,18 +41,15 @@ public class PlanningOverviewController {
 
 	}
 
-	// Reference to the main application.
 	private MainApp mainApp;
 
 	@FXML
 	private void initialize() {
-		// Initialize the person table with the two columns.
+
 		plannedArtistsColumn.setCellValueFactory(cellData -> cellData.getValue().artistProperty());
 		plannedStagesColumn.setCellValueFactory(cellData -> cellData.getValue().stageProperty());
-		// plannedStartTimeColumn.setCellValueFactory(cellData ->
-		// cellData.getValue().getStartTime());
-		// plannedEndTimeColumn.setCellValueFactory(cellData ->
-		// cellData.getValue().stageProperty());
+		plannedStartTimesColumn.setCellValueFactory(cellData -> cellData.getValue().startTimeProperty());
+		plannedEndTimesColumn.setCellValueFactory(cellData -> cellData.getValue().endTimeProperty());
 		showPlanDetails(null);
 		planTable.getSelectionModel().selectedItemProperty()
 				.addListener((observable, oldValue, newValue) -> showPlanDetails(newValue));
@@ -57,8 +59,8 @@ public class PlanningOverviewController {
 		if (plan != null) {
 			plannedArtistLabel.setText(plan.getArtist());
 			plannedStageLabel.setText(plan.getStage());
-			plannedStartLabel.setText("");
-			plannedEndLabel.setText("");
+			plannedStartLabel.setText(plan.getStartTime());
+			plannedEndLabel.setText(plan.getEndTime());
 		} else {
 			plannedArtistLabel.setText("There is currently no event selected");
 			plannedStageLabel.setText("There is currently no event selected");
@@ -72,6 +74,7 @@ public class PlanningOverviewController {
 		int selectedIndex = planTable.getSelectionModel().getSelectedIndex();
 		if (selectedIndex >= 0) {
 			PlanModel selectedPlan = planTable.getSelectionModel().getSelectedItem();
+			System.out.println(selectedPlan.getId());
 			DatabaseController.Delete("planning", selectedPlan.getId());
 			planTable.getItems().remove(selectedIndex);
 		} else {
@@ -84,10 +87,45 @@ public class PlanningOverviewController {
 		}
 	}
 
+	@FXML
+	private void handleNewPlan() {
+		PlanModel tempPlan = new PlanModel();
+		boolean okClicked = mainApp.showPlanDialog(tempPlan);
+		if (okClicked) {
+			int key = DatabaseController.AddPlan(tempPlan.getArtistId(), tempPlan.getStageId(), tempPlan.getStartTime(),
+					tempPlan.getEndTime());
+			tempPlan.setId(key);
+			tempPlan.setStartTime(tempPlan.getStartTime() + ":00");
+			tempPlan.setEndTime(tempPlan.getEndTime() + ":00");
+			mainApp.getPlanData().add(tempPlan);
+		}
+	}
+
+	@FXML
+	private void handleEditPlan() {
+		PlanModel selectedPlan = planTable.getSelectionModel().getSelectedItem();
+		if (selectedPlan != null) {
+			boolean okClicked = mainApp.showPlanDialog(selectedPlan);
+			DatabaseController.EditPlan(selectedPlan.getId(), selectedPlan.getArtistId(), selectedPlan.getStageId(),
+					selectedPlan.getStartTime(), selectedPlan.getEndTime());
+			if (okClicked) {
+				selectedPlan.setStartTime(selectedPlan.getStartTime() + ":00");
+				selectedPlan.setEndTime(selectedPlan.getEndTime() + ":00");
+				showPlanDetails(selectedPlan);
+			}
+		} else {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.initOwner(mainApp.getPrimaryStage());
+			alert.setTitle("No Selection");
+			alert.setHeaderText("No stage Selected");
+			alert.setContentText("Please select a stage in the table.");
+
+			alert.showAndWait();
+		}
+	}
+
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
-
-		// Add observable list data to the table
 		planTable.setItems(mainApp.getPlanData());
 	}
 }

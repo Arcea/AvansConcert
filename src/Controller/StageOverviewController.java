@@ -27,12 +27,11 @@ public class StageOverviewController {
 	public StageOverviewController() {
 	}
 
-	// Reference to the main application.
 	private MainApp mainApp;
 
 	@FXML
 	private void initialize() {
-		// Initialize the person table with the two columns.
+
 		stagesColumn.setCellValueFactory(cellData -> cellData.getValue().stageProperty());
 		stageDescriptionColumn.setCellValueFactory(cellData -> cellData.getValue().stageDescriptionProperty());
 		showStageDetails(null);
@@ -103,7 +102,6 @@ public class StageOverviewController {
 	public void setMainApp(MainApp mainApp) {
 		this.mainApp = mainApp;
 
-		// Add observable list data to the table
 		stagesTable.setItems(mainApp.getStageData());
 	}
 }

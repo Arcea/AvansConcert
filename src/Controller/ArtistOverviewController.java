@@ -12,111 +12,93 @@ import Model.ArtistModel;
 
 public class ArtistOverviewController {
 	@FXML
-    private TableView<ArtistModel> concertTable;
-    @FXML
-    private TableColumn<ArtistModel, String> artistColumn;
-    @FXML
-    private TableColumn<ArtistModel, String> descriptionColumn;
+	private TableView<ArtistModel> concertTable;
+	@FXML
+	private TableColumn<ArtistModel, String> artistColumn;
+	@FXML
+	private TableColumn<ArtistModel, String> descriptionColumn;
 
-    @FXML
-    private Label artistLabel;
-    @FXML
-    private Label descriptionLabel;
+	@FXML
+	private Label artistLabel;
+	@FXML
+	private Label descriptionLabel;
 
+	private MainApp mainApp;
 
-    // Reference to the main application.
-    private MainApp mainApp;
+	public ArtistOverviewController() {
+	}
 
-    /**
-     * The constructor.
-     * The constructor is called before the initialize() method.
-     */
-    public ArtistOverviewController() {
-    }
+	@FXML
+	private void initialize() {
+		artistColumn.setCellValueFactory(cellData -> cellData.getValue().artistProperty());
+		descriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
+		showArtistDetails(null);
+		concertTable.getSelectionModel().selectedItemProperty()
+				.addListener((observable, oldValue, newValue) -> showArtistDetails(newValue));
+	}
 
-    /**
-     * Initializes the controller class. This method is automatically called
-     * after the fxml file has been loaded.
-     */
-    @FXML
-    private void initialize() {
-        // Initialize the person table with the two columns.
-        artistColumn.setCellValueFactory(cellData -> cellData.getValue().artistProperty());
-        descriptionColumn.setCellValueFactory(cellData -> cellData.getValue().descriptionProperty());
-        showArtistDetails(null);
-        concertTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> showArtistDetails(newValue));
-    }
-    
-    private void showArtistDetails(ArtistModel artist){
-    	if(artist != null){
-    		artistLabel.setText(artist.getArtist());
-    		descriptionLabel.setText(artist.getDescription());
-    	}
-    	else{
-    		artistLabel.setText("There is currently no artist selected");
-    		descriptionLabel.setText("There is currently no artist selected");
-    	}
-    }
-    
-    @FXML
-    private void handleNewArtist(){
-    	ArtistModel tempArtist = new ArtistModel();
-    	boolean okClicked = mainApp.showArtistDialog(tempArtist);
-    	if (okClicked){
-    	int key = DatabaseController.AddArtist(tempArtist.getArtist(), tempArtist.getDescription());
-    		tempArtist.setId(key);
-    		mainApp.getArtistData().add(tempArtist);
-    	}
-    }
-    
-    @FXML
-    private void handleEditArtist(){
-    	ArtistModel selectedArtist = concertTable.getSelectionModel().getSelectedItem();
-    	if(selectedArtist != null){
-    		boolean okClicked = mainApp.showArtistDialog(selectedArtist);
-    		DatabaseController.EditArtist(selectedArtist.getId(), selectedArtist.getArtist(), selectedArtist.getDescription());
-    		if(okClicked){
-    			showArtistDetails(selectedArtist);
-    		}
-    	}
-    	else{
-    		 Alert alert = new Alert(AlertType.WARNING);
-    	     alert.initOwner(mainApp.getPrimaryStage());
-    	     alert.setTitle("No Selection");
-    	     alert.setHeaderText("No Artist Selected");
-    	     alert.setContentText("Please select an artist in the table.");
+	private void showArtistDetails(ArtistModel artist) {
+		if (artist != null) {
+			artistLabel.setText(artist.getArtist());
+			descriptionLabel.setText(artist.getDescription());
+		} else {
+			artistLabel.setText("There is currently no artist selected");
+			descriptionLabel.setText("There is currently no artist selected");
+		}
+	}
 
-    	     alert.showAndWait();
-    	}
-    }
-    
-    @FXML
-    private void handleDeleteArtist(){
-    	int selectedIndex = concertTable.getSelectionModel().getSelectedIndex(); 	
-    	if(selectedIndex >= 0){
-    		ArtistModel selectedArtist =  concertTable.getSelectionModel().getSelectedItem();
-    		DatabaseController.Delete("artists" ,selectedArtist.getId());
-    		concertTable.getItems().remove(selectedIndex);
-    	}else{
-    		Alert alert = new Alert(AlertType.WARNING);
-    		alert.initOwner(mainApp.getPrimaryStage());
-    		alert.setTitle("No selection");
-    		alert.setHeaderText("No artist selected");
-    		alert.setContentText("Please select an artist in the table");
-    		
-    		alert.showAndWait();
-    	}
-    }
+	@FXML
+	private void handleNewArtist() {
+		ArtistModel tempArtist = new ArtistModel();
+		boolean okClicked = mainApp.showArtistDialog(tempArtist);
+		if (okClicked) {
+			int key = DatabaseController.AddArtist(tempArtist.getArtist(), tempArtist.getDescription());
+			tempArtist.setId(key);
+			mainApp.getArtistData().add(tempArtist);
+		}
+	}
 
-    /**
-     * Is called by the main application to give a reference back to itself.
-     * 
-     * @param mainApp
-     */
-    public void setMainApp(MainApp mainApp) {
-        this.mainApp = mainApp;
+	@FXML
+	private void handleEditArtist() {
+		ArtistModel selectedArtist = concertTable.getSelectionModel().getSelectedItem();
+		if (selectedArtist != null) {
+			boolean okClicked = mainApp.showArtistDialog(selectedArtist);
+			DatabaseController.EditArtist(selectedArtist.getId(), selectedArtist.getArtist(),
+					selectedArtist.getDescription());
+			if (okClicked) {
+				showArtistDetails(selectedArtist);
+			}
+		} else {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.initOwner(mainApp.getPrimaryStage());
+			alert.setTitle("No Selection");
+			alert.setHeaderText("No Artist Selected");
+			alert.setContentText("Please select an artist in the table.");
 
-        // Add observable list data to the table
-        concertTable.setItems(mainApp.getArtistData());
-    }
+			alert.showAndWait();
+		}
+	}
+
+	@FXML
+	private void handleDeleteArtist() {
+		int selectedIndex = concertTable.getSelectionModel().getSelectedIndex();
+		if (selectedIndex >= 0) {
+			ArtistModel selectedArtist = concertTable.getSelectionModel().getSelectedItem();
+			DatabaseController.Delete("artists", selectedArtist.getId());
+			concertTable.getItems().remove(selectedIndex);
+		} else {
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.initOwner(mainApp.getPrimaryStage());
+			alert.setTitle("No selection");
+			alert.setHeaderText("No artist selected");
+			alert.setContentText("Please select an artist in the table");
+
+			alert.showAndWait();
+		}
+	}
+
+	public void setMainApp(MainApp mainApp) {
+		this.mainApp = mainApp;
+		concertTable.setItems(mainApp.getArtistData());
+	}
 }

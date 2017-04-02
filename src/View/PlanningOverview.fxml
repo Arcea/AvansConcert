@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.PlanningOverviewController">
    <children>
       <SplitPane dividerPositions="0.37969924812030076" layoutX="182.0" layoutY="59.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -58,8 +57,8 @@
                            </children>
                         </GridPane>
                         <Button layoutX="426.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleDeletePlan" text="Delete" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" />
-                        <Button layoutX="341.0" layoutY="459.0" mnemonicParsing="false" text="Edit" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="70.0" />
-                        <Button layoutX="266.0" layoutY="459.0" mnemonicParsing="false" text="New" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="120.0" />
+                        <Button layoutX="341.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleEditPlan" text="Edit" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="70.0" />
+                        <Button layoutX="266.0" layoutY="459.0" mnemonicParsing="false" onAction="#handleNewPlan" text="New" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="120.0" />
                      </children>
                   </AnchorPane>
                </children>

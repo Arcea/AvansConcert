@@ -27,7 +27,6 @@ public class StageDialogController {
 
 	public void setStage(StageModel stage) {
 		this.stage = stage;
-
 		stageField.setText(stage.getStage());
 		stageDescriptionField.setText(stage.getStageDescription());
 	}
@@ -65,7 +64,7 @@ public class StageDialogController {
 		if (errorMessage.length() == 0) {
 			return true;
 		} else {
-			// Show the error message.
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.initOwner(dialogStage);
 			alert.setTitle("Invalid Fields");

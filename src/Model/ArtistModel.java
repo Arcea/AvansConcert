@@ -14,9 +14,6 @@ public class ArtistModel {
 	private final StringProperty description;
 	private int id;
 
-	/**
-	 * Default constructor.
-	 */
 	public ArtistModel() {
 		this(null, null, 0);
 	}
@@ -58,9 +55,4 @@ public class ArtistModel {
 	public void setId(int id) {
 		this.id = id;
 	}
-
-	// public void setId(int id) {
-	// this.id.set(id);
-	// }
-
 }
